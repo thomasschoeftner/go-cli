@@ -1,7 +1,7 @@
 package cli
 import (
 	"flag"
-	"mmlib/commons"
+	"go-cli/commons"
 	"os"
 	"errors"
 	"fmt"

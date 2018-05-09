@@ -4,7 +4,7 @@ import (
 	"strconv"
 )
 
-func TasksOverviewHandler(ctx Context, c Command) []Result {
+func TasksOverviewHandler(ctx Context, c *Command) []Result {
 	ctx.Printf("%d tasks available:\n", len(ctx.AllTasks))
 	maxTaskNameLen := strconv.Itoa(maxTaskNameLength(ctx.AllTasks))
 	fmt := "%5d %" + maxTaskNameLen + "s %s\n"
@@ -16,7 +16,7 @@ func TasksOverviewHandler(ctx Context, c Command) []Result {
 			ctx.Printf("        implies: %s\n", dependencies)
 		}
 	}
-	return []Result{{&c, nil}}
+	return []Result{{c, nil}}
 }
 
 func maxTaskNameLength(tasks TaskSequence) int {

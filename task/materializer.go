@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/google/logger"
-	"mmlib/config"
+	"go-cli/config"
 )
 
 const (

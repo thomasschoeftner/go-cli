@@ -1,9 +1,9 @@
 package tasks
 
 import (
-	"mmlib/config"
-	"mmlib/commons"
-	"mmlib/tree"
+	"go-cli/config"
+	"go-cli/commons"
+	"go-cli/tree"
 	"fmt"
 )
 
@@ -38,7 +38,7 @@ type task struct {
 	Handler Handler
 }
 
-type Handler func(ctx Context, c Command) []Result
+type Handler func(ctx Context, c *Command) []Result
 
 type Context struct {
 	AllTasks TaskSequence
@@ -47,7 +47,7 @@ type Context struct {
 }
 
 type Result struct {
-	c *Command
+	C *Command
 	Error  error
 }
 
