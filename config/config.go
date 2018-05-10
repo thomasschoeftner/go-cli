@@ -4,7 +4,6 @@ import (
 	"strings"
 	"io/ioutil"
 	"encoding/json"
-	"github.com/google/logger"
 	"fmt"
 )
 
@@ -17,14 +16,19 @@ func FromFile(conf Config, configFile string, variables map[string]string) error
 	}
 	jsonString := string(raw[:])
 
-	//replace variables in config
-	for k, v := range variables {
-		placeholder := fmt.Sprintf("${%s}", k)
-		n := strings.Count(jsonString, placeholder)
-		jsonString = strings.Replace(jsonString, placeholder, v, n)
+	if variables != nil {
+		//replace variables in config
+		for k, v := range variables {
+			jsonString = ReplaceVariable(jsonString, k, v)
+		}
 	}
-	logger.Infof("Configuration:\n%s", jsonString)
 
 	error = json.Unmarshal([]byte(jsonString), conf)
 	return error
+}
+
+func ReplaceVariable(configStr string, key string, val string) string {
+	placeholder := fmt.Sprintf("${%s}", key)
+	n := strings.Count(configStr, placeholder)
+	return strings.Replace(configStr, placeholder, val, n)
 }

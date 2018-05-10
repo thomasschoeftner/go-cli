@@ -1,6 +1,9 @@
 package commons
 
-import "fmt"
+import (
+	"fmt"
+	"io"
+)
 
 type FormatPrinter func(format string, v ...interface{})
 
@@ -8,10 +11,11 @@ func Printf(format string, v ...interface{}) {
 	fmt.Printf(format, v...)
 }
 
-func Tee(printers ...FormatPrinter) FormatPrinter {
-	return func(format string, v ...interface{}) {
-		for _, print := range printers {
-			print(format, v...)
-		}
-	}
+
+type WriterFormatPrinter struct {
+	W io.Writer
+}
+
+func (wfp *WriterFormatPrinter) Printf(format string, v ...interface{}) {
+	fmt.Fprintf(wfp.W, format, v...)
 }

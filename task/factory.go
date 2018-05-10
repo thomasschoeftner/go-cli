@@ -42,6 +42,14 @@ func ValidateTasks(tasks TaskSequence) (TaskMap, []error) {
 	}
 }
 
+func (taskMap TaskMap) TaskNamesDefined() map[string]bool {
+	defined := map[string]bool {}
+	for name := range taskMap {
+		defined[name] = true
+	}
+	return defined
+}
+
 func (taskMap TaskMap) GetTasksForNames(taskNames ...string) (TaskSequence, error) {
 	tasks := TaskSequence{}
 	for _, taskName := range taskNames {

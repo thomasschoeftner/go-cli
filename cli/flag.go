@@ -6,7 +6,6 @@ import (
 	"go-cli/commons"
 	"strconv"
 	"strings"
-	"errors"
 )
 
 type flagDefinition struct {
@@ -33,16 +32,28 @@ func (fd *flagDefinition) OrEnvironmentVar(varName string) *flagDefinition {
 	return fd
 }
 
-
-type boolFlag flagDefinition
-func Boolean(def *flagDefinition) boolFlag {
-	return boolFlag(*def)
+func (fd *flagDefinition) GetBoolean() *boolFlag {
+	return (*boolFlag)(fd)
 }
 
+func (fd *flagDefinition) GetString() *stringFlag {
+	return (*stringFlag)(fd)
+}
+
+func (fd *flagDefinition) GetInt() *intFlag {
+	return (*intFlag)(fd)
+}
+
+func (fd *flagDefinition) GetArray() *arrayFlag {
+	return (*arrayFlag)(fd)
+}
+
+
+
+type boolFlag flagDefinition
 var trueVals = [...]string{"yes", "true", "1"}
 var falseVals = [...]string{"no", "false", "0"}
-
-func (b boolFlag) WithDefault(defaultVal bool) *bool {
+func (b *boolFlag) WithDefault(defaultVal bool) *bool {
 	fallback := defaultVal
 	envVal := b.envOverrideVal
 	if (envVal != nil) {
@@ -60,10 +71,6 @@ func (b boolFlag) WithDefault(defaultVal bool) *bool {
 
 
 type stringFlag flagDefinition
-func String(def *flagDefinition) stringFlag {
-	return stringFlag(*def)
-}
-
 func (s stringFlag) WithDefault(defaultVal string) *string {
 	fallback := defaultVal
 	if s.envOverrideVal != nil {
@@ -73,11 +80,8 @@ func (s stringFlag) WithDefault(defaultVal string) *string {
 }
 
 
-type intFlag flagDefinition
-func Int(def *flagDefinition) intFlag {
-	return intFlag(*def)
-}
 
+type intFlag flagDefinition
 func (i intFlag) WithDefault(defaultVal int) *int {
 	fallback := defaultVal
 	if i.envOverrideVal != nil {
@@ -92,39 +96,36 @@ func (i intFlag) WithDefault(defaultVal int) *int {
 }
 
 
-type arrayFlag struct {
-	flagDefinition
-	flagVals []string
-	isOverriddenFirstTime bool
-}
 
-func (a *arrayFlag) String() string {
+//type arrayFlag struct {
+//	def                        flagDefinition
+//	flagVals                   []string
+//	defaultsAreBeingOverridden bool
+//}
+type arrayFlag flagDefinition
+type arrayFlagValue struct {
+		flagVals                   []string
+		defaultsAreBeingOverridden bool
+}
+func (a *arrayFlagValue) String() string {
 	return "[" + strings.Join(a.flagVals, ", ") + "]"
 }
-func (a *arrayFlag) Set(s string) error {
-	if a.isOverriddenFirstTime {
+func (a *arrayFlagValue) Set(s string) error {
+	if !a.defaultsAreBeingOverridden {
+		//first time set is called -> re-initialize to discard defaults
 		a.flagVals = []string{}
 	}
-	a.isOverriddenFirstTime = false
-	if a.flagVals == nil {
-		return errors.New("array-flag is uninitialized")
-	}
+	a.defaultsAreBeingOverridden = true
 	a.flagVals = append(a.flagVals, s)
 	return nil
 }
 
-func Array(def *flagDefinition) arrayFlag {
-	return arrayFlag{*def, []string{}, true}
-}
-
-func (a arrayFlag) WithDefault(defaultVals ...string) *[]string {
+func (a *arrayFlag) WithDefault(defaultVals ...string) *[]string {
 	fallback := defaultVals
 	if a.envOverrideVal != nil {
 		fallback = strings.Fields(*a.envOverrideVal)
 	}
-	a.flagVals = fallback
-	flag.Var(&a, a.name, a.usage)
-	return &a.flagVals
+	values := arrayFlagValue{fallback, false}
+	flag.Var(&values, a.name, a.usage)
+	return &values.flagVals
 }
-
-

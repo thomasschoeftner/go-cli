@@ -2,24 +2,33 @@ package task
 
 import (
 	"strconv"
+	"go-cli/commons"
 )
 
 func TasksOverviewHandler(ctx Context, c *Command) []Result {
 	ctx.Printf("%d tasks available:\n", len(ctx.AllTasks))
-	maxTaskNameLen := strconv.Itoa(maxTaskNameLength(ctx.AllTasks))
-	fmt := "%5d %" + maxTaskNameLen + "s %s\n"
-	for idx, t := range ctx.AllTasks {
-		ctx.Printf(fmt, idx+1, t.Name, t.Desc)
-
-		dependencies := t.Dependencies().Flatten()
-		if len(dependencies) > 0 {
-			ctx.Printf("        implies: %s\n", dependencies)
-		}
-	}
+	format := TaskSynopsisFormat(MaxTaskNameLength(ctx.AllTasks))
+	PrintTaskSynopsis(ctx.Printf, ctx.AllTasks, format, true)
 	return []Result{{c, nil}}
 }
 
-func maxTaskNameLength(tasks TaskSequence) int {
+func PrintTaskSynopsis(print commons.FormatPrinter, allTasks TaskSequence, format string, withDependencies bool) {
+	for _, t := range allTasks {
+		print(format, t.Name, t.Desc)
+		if withDependencies {
+			dependencies := t.Dependencies().Flatten()
+			if len(dependencies) > 0 {
+				print(format, "", "depends on: " + dependencies.String())
+			}
+		}
+	}
+}
+
+func TaskSynopsisFormat(maxTaskNameLen int) string {
+	return "  %-" + strconv.Itoa(maxTaskNameLen) + "s %s\n"
+}
+
+func MaxTaskNameLength(tasks TaskSequence) int {
 	maxLength := 0
 	for _, t := range tasks {
 		l := len(t.Name)
