@@ -1,4 +1,4 @@
-package tasks
+package task
 
 type ProcessingConf struct {
 	Type string //"sequential", "concurrent"

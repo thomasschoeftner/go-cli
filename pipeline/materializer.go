@@ -1,10 +1,11 @@
-package tasks
+package pipeline
 
 import (
 	"errors"
 	"fmt"
 	"github.com/google/logger"
 	"go-cli/config"
+	"go-cli/task"
 )
 
 const (
@@ -13,19 +14,19 @@ const (
 )
 
 type Pipeline struct {
-	in chan Command
-	out chan Result
+	in chan task.Command
+	out chan task.Result
 }
 
-func MaterializePipeline(tasks TaskSequence) unmaterialized {
+func Materialize(tasks task.TaskSequence) unmaterialized {
 	return unmaterialized{tasks}
 }
 
 type unmaterialized struct {
-	tasks TaskSequence
+	tasks task.TaskSequence
 }
 
-func (u unmaterialized) WithConfig(processingConf *ProcessingConf, appConf config.Config) (*Pipeline, error) {
+func (u unmaterialized) WithConfig(processingConf *task.ProcessingConf, appConf config.Config) (*Pipeline, error) {
 	var materializer materializeFunc = nil
 	switch processingConf.Type {
 	case Process_Sequential:
@@ -38,18 +39,18 @@ func (u unmaterialized) WithConfig(processingConf *ProcessingConf, appConf confi
 	return materializer(u.tasks, processingConf, appConf)
 }
 
-type materializeFunc func (tasks TaskSequence, processingConf *ProcessingConf, appConf config.Config) (*Pipeline, error)
+type materializeFunc func (tasks task.TaskSequence, processingConf *task.ProcessingConf, appConf config.Config) (*Pipeline, error)
 
-func errorMaterializer(tasks TaskSequence, processingConf *ProcessingConf, appConf config.Config) (*Pipeline, error) {
+func errorMaterializer(tasks task.TaskSequence, processingConf *task.ProcessingConf, appConf config.Config) (*Pipeline, error) {
 	return nil, errors.New(fmt.Sprintf("Invalid processing type - materializer for \"%s\" is unknown", processingConf.Type))
 }
 
-func syncMaterializer(tasks TaskSequence, processingConf *ProcessingConf, appConf config.Config) (*Pipeline, error) {
+func syncMaterializer(tasks task.TaskSequence, processingConf *task.ProcessingConf, appConf config.Config) (*Pipeline, error) {
 	logger.Infof("creating sequential processing chain (task after task) from tasks: %s", tasks)
 	return nil, errors.New("implement me")
 }
 
-func concurrentMaterializer(tasks TaskSequence, processingConf *ProcessingConf, appConf config.Config) (*Pipeline, error) {
+func concurrentMaterializer(tasks task.TaskSequence, processingConf *task.ProcessingConf, appConf config.Config) (*Pipeline, error) {
 	logger.Infof("creating concurrent processing chain (buffer-size=%d) from tasks: %s", processingConf.Concurrent.BufferSize, tasks)
 	return nil, errors.New("implement me")
 }

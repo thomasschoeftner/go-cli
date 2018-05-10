@@ -1,9 +1,8 @@
-package tasks
+package task
 
 import (
 	"time"
 )
-
 
 type Command struct {
 	Id string
