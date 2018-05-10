@@ -5,6 +5,8 @@ import (
 	"flag"
 	"go-cli/commons"
 	"strconv"
+	"strings"
+	"errors"
 )
 
 type flagDefinition struct {
@@ -88,3 +90,41 @@ func (i intFlag) WithDefault(defaultVal int) *int {
 	}
 	return flag.Int(i.name, fallback, i.usage)
 }
+
+
+type arrayFlag struct {
+	flagDefinition
+	flagVals []string
+	isOverriddenFirstTime bool
+}
+
+func (a *arrayFlag) String() string {
+	return "[" + strings.Join(a.flagVals, ", ") + "]"
+}
+func (a *arrayFlag) Set(s string) error {
+	if a.isOverriddenFirstTime {
+		a.flagVals = []string{}
+	}
+	a.isOverriddenFirstTime = false
+	if a.flagVals == nil {
+		return errors.New("array-flag is uninitialized")
+	}
+	a.flagVals = append(a.flagVals, s)
+	return nil
+}
+
+func Array(def *flagDefinition) arrayFlag {
+	return arrayFlag{*def, []string{}, true}
+}
+
+func (a arrayFlag) WithDefault(defaultVals ...string) *[]string {
+	fallback := defaultVals
+	if a.envOverrideVal != nil {
+		fallback = strings.Fields(*a.envOverrideVal)
+	}
+	a.flagVals = fallback
+	flag.Var(&a, a.name, a.usage)
+	return &a.flagVals
+}
+
+
