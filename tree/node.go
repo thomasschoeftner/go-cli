@@ -12,7 +12,7 @@ func NewNode(children []*Node, payload interface{}) *Node {
 }
 
 func (node *Node) Flatten() NodeList {
-	return append(node.Children, node).Flatten()
+	return NodeList{node}.Flatten()
 }
 
 func (nodes NodeList) Flatten() NodeList {

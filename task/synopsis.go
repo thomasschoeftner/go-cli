@@ -3,6 +3,7 @@ package task
 import (
 	"strconv"
 	"go-cli/commons"
+	"fmt"
 )
 
 func TasksOverviewHandler(ctx Context, c *Command) []Result {
@@ -18,7 +19,7 @@ func PrintTaskSynopsis(print commons.FormatPrinter, allTasks TaskSequence, forma
 		if withDependencies {
 			dependencies := t.Dependencies().Flatten()
 			if len(dependencies) > 0 {
-				print(format, "", "depends on: " + dependencies.String())
+				print(format, "", fmt.Sprintf("depends on: %v", dependencies))
 			}
 		}
 	}

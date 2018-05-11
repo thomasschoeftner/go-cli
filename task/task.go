@@ -4,7 +4,7 @@ import (
 	"go-cli/config"
 	"go-cli/commons"
 	"go-cli/tree"
-	"fmt"
+	"strings"
 )
 
 func NewTask(name string, desc string, handlerFunc Handler) *task {
@@ -47,7 +47,7 @@ type Context struct {
 }
 
 type Result struct {
-	C *Command
+	Command *Command
 	Error  error
 }
 
@@ -59,6 +59,7 @@ func (t *task) Dependencies() TaskSequence {
 }
 
 func (t *task) Flatten() TaskSequence {
+	//println("flatten " + t.Name)   //TODO remove
 	return getTasksFromNodes(t.node.Flatten())
 }
 
@@ -73,15 +74,20 @@ func (ts TaskSequence) Flatten() TaskSequence {
 func getTasksFromNodes(nodes tree.NodeList) TaskSequence {
 	tasks := TaskSequence{}
 	for _, node := range nodes {
+		//println("  " + node.Value.(*task).Name)   //TODO remove
 		tasks = append(tasks, node.Value.(*task))
 	}
 	return tasks
 }
 
 func (ts TaskSequence) String() string {
-	str := ""
-	for _, task := range ts {
-		str += fmt.Sprintf("%s -> ", task.Name)
+	return strings.Join(ts.GetNames(), " -> ")
+}
+
+func (ts TaskSequence) GetNames() []string {
+	results := []string {}
+	for _, t := range ts {
+		results = append(results, t.Name)
 	}
-	return str[:len(str)-3]
+	return results
 }
