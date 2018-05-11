@@ -4,7 +4,6 @@ type NodeList []*Node
 type Node struct {
 	Children NodeList
 	Value    interface{}
-
 }
 
 func NewNode(children []*Node, payload interface{}) *Node {

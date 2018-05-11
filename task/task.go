@@ -1,8 +1,6 @@
 package task
 
 import (
-	"go-cli/config"
-	"go-cli/commons"
 	"go-cli/tree"
 	"strings"
 )
@@ -38,30 +36,16 @@ type task struct {
 	Handler Handler
 }
 
-type Handler func(ctx Context, c *Command) []Result
-
-type Context struct {
-	AllTasks TaskSequence
-	Config   config.Config
-	Printf   commons.FormatPrinter
-}
-
-type Result struct {
-	Command *Command
-	Error  error
-}
-
-
-type TaskSequence []*task
 
 func (t *task) Dependencies() TaskSequence {
 	return getTasksFromNodes(t.node.Children)
 }
 
 func (t *task) Flatten() TaskSequence {
-	//println("flatten " + t.Name)   //TODO remove
 	return getTasksFromNodes(t.node.Flatten())
 }
+
+type TaskSequence []*task
 
 func (ts TaskSequence) Flatten() TaskSequence {
 	results := TaskSequence{}
@@ -74,7 +58,6 @@ func (ts TaskSequence) Flatten() TaskSequence {
 func getTasksFromNodes(nodes tree.NodeList) TaskSequence {
 	tasks := TaskSequence{}
 	for _, node := range nodes {
-		//println("  " + node.Value.(*task).Name)   //TODO remove
 		tasks = append(tasks, node.Value.(*task))
 	}
 	return tasks

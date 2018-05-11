@@ -6,11 +6,12 @@ import (
 	"fmt"
 )
 
-func TasksOverviewHandler(ctx Context, c *Command) []Result {
+
+func TasksOverviewHandler(ctx Context, job Job) ([]Job, error) {
 	ctx.Printf("%d tasks available:\n", len(ctx.AllTasks))
 	format := TaskSynopsisFormat(MaxTaskNameLength(ctx.AllTasks))
 	PrintTaskSynopsis(ctx.Printf, ctx.AllTasks, format, true)
-	return []Result{{c, nil}}
+	return []Job{job}, nil
 }
 
 func PrintTaskSynopsis(print commons.FormatPrinter, allTasks TaskSequence, format string, withDependencies bool) {
