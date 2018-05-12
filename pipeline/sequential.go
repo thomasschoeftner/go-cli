@@ -30,9 +30,7 @@ func processingLoop(commands <-chan Command, events chan<- Event, tasks task.Tas
 	createdAt := time.Now()
 
 	for !stop {
-		println("aaaaa")
 		command := <-commands
-		println("bbbbb")
 		switch command.kind {
 		case cmdStop:
 			logger.Infof("stopping processing pipeline due to: %+v", command)

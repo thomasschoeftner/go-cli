@@ -104,17 +104,33 @@ func done(job task.Job) Event {
 }
 
 func (e Event) IsClosed() (bool, *Statistics) {
-	return e.kind == evtClosed, e.data[evtparam_statistics].(*Statistics)
+	if e.kind == evtClosed {
+		return true, e.data[evtparam_statistics].(*Statistics)
+	} else {
+		return false, nil
+	}
 }
 
 func (e Event) IsCanceled() (bool, string) {
-	return e.kind == evtCanceled, e.data[evtparam_reason].(string)
+	if e.kind == evtCanceled {
+		return true, e.data[evtparam_reason].(string)
+	} else {
+		return false, ""
+	}
 }
 
 func (e Event) IsError() (bool, error, task.Job) {
-	return e.kind == evtError, e.data[evtparam_error].(error), e.data[evtparam_job].(task.Job)
+	if e.kind == evtError {
+		return true, e.data[evtparam_error].(error), e.data[evtparam_job].(task.Job)
+	} else {
+		return false, nil, nil
+	}
 }
 
 func (e Event) IsDone() (bool, task.Job) {
-	return e.kind == evtJobDone, e.data[evtparam_job].(task.Job)
+	if e.kind == evtJobDone {
+		return true, e.data[evtparam_job].(task.Job)
+	} else {
+		return false, nil
+	}
 }
