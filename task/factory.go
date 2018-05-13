@@ -7,15 +7,14 @@ import (
 
 type TaskMap map[string]*task
 
-func LoadTasks(tasks ...*task) (TaskSequence, error) {
+func LoadTasks(tasks ...*task) TaskSequence {
 	taskSeq := TaskSequence{}
 	for _, task := range tasks {
-		if task == nil {
-			return nil, errors.New("Task must not be nil")
+		if task != nil { //ignore nil task pointers
+			taskSeq = append(taskSeq, task)
 		}
-		taskSeq = append(taskSeq, task)
 	}
-	return taskSeq, nil
+	return taskSeq
 }
 
 func ValidateTasks(tasks TaskSequence) (TaskMap, []error) {

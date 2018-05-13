@@ -4,6 +4,7 @@ import (
 	"time"
 	"sync"
 	"go-cli/task"
+	"fmt"
 )
 
 var _id = 0
@@ -61,7 +62,25 @@ func (c Command) isCancel() bool {
 	return c.kind == cmdCancel
 }
 
-
+func (c Command) String() string {
+	kind := ""
+	if c.kind == cmdProcess {
+		kind = "PROCESS"
+	} else if c.kind == cmdCancel {
+		kind = "CANCEL"
+	} else if c.kind == cmdStop {
+		kind = "STOP"
+	} else {
+		kind = "UNKNOWN"
+	}
+	var remark string
+	if c.remark == nil {
+		remark = "without remark"
+	} else {
+		remark = fmt.Sprintf("with remark: \"%s\"", *c.remark)
+	}
+	return fmt.Sprintf("%s command [%d] issued at %s %s and params %v", kind, c.id, c.issuedAt.String(), remark, c.job)
+}
 
 const (
 	evtClosed   = 10

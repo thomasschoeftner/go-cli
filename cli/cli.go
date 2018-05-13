@@ -15,21 +15,21 @@ const (
 func Setup(syntax *string, allTasks task.TaskSequence) {
 	writer := flag.CommandLine.Output()
 	wpf := commons.WriterFormatPrinter{writer}
-	print := wpf.Printf
+	printf := wpf.Printf
 	flag.Usage = func() {
 		appName := os.Args[0]
-		print("Usage of %s:\n", appName)
+		printf("Usage of %s:\n", appName)
 		if syntax != nil {
-			print("syntax: %s %s\n", appName, *syntax)
+			printf("syntax: %s %s\n", appName, *syntax)
 		}
 
-		print("\nFlags:\n")
+		printf("\nFlags:\n")
 		flag.PrintDefaults()
 
 		if allTasks != nil {
-			print("\nTasks:\n")
+			printf("\nTasks:\n")
 			format := task.TaskSynopsisFormat(task.MaxTaskNameLength(allTasks))
-			task.PrintTaskSynopsis(print, allTasks, format, false)
+			task.PrintTaskSynopsis(printf, allTasks, format, false)
 		}
 	}
 

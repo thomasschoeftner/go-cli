@@ -21,26 +21,23 @@ func sequentialMaterializer(tasks task.TaskSequence, processingConf *task.Proces
 
 	// run processing loop
 	go processingLoop(commands, events, tasks, ctx, processingConf)
-
 	return &Pipeline{ commands, events}, nil
 }
 
 func processingLoop(commands <-chan Command, events chan<- Event, tasks task.TaskSequence, ctx task.Context, processingConf *task.ProcessingConf) {
 	stop := false
-	createdAt := time.Now()
+	launchedAt := time.Now()
 
 	for !stop {
 		command := <-commands
+		logger.Infof("received %s", command)
 		switch command.kind {
 		case cmdStop:
-			logger.Infof("stopping processing pipeline due to: %+v", command)
 			stop = true
 		case cmdCancel:
-			logger.Infof("cancelling processing pipeline due to: %+v", command)
 			stop = true
 			events <- canceled(*command.remark)
 		case cmdProcess:
-			logger.Infof("received new processing request: %+v", command)
 			err := process(command.job, tasks, ctx)
 			if err != nil {
 				events <- errorIn(command.job, err)
@@ -51,7 +48,7 @@ func processingLoop(commands <-chan Command, events chan<- Event, tasks task.Tas
 				events <- done(command.job)
 			}
 		default:
-			err := errors.New(fmt.Sprintf("received unknown Command: %+v", command))
+			err := errors.New(fmt.Sprintf("received %s", command))
 			logger.Error(err)
 			stop = true
 			events <- errorIn(nil, err)
@@ -59,8 +56,9 @@ func processingLoop(commands <-chan Command, events chan<- Event, tasks task.Tas
 	}
 
 	finishedAt := time.Now()
-	statistics := Statistics{CreatedAt: createdAt, FinishedAt: finishedAt}
+	statistics := Statistics{LaunchedAt: launchedAt, FinishedAt: finishedAt}
 	events <- closed(&statistics)
+	close(events)
 }
 
 //process all tasks for specific job.
