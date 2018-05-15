@@ -65,18 +65,25 @@ func processingLoop(commands <-chan Command, events chan<- Event, tasks task.Tas
 //if a task creates multiple jobs as output, process these in bulk during each of the subsequent steps
 func process(job task.Job, tasks task.TaskSequence, ctx task.Context) error {
 	jobsIn := []task.Job{job}
+	println("tasks to be run:", tasks.String())
 	for _, t := range tasks {
-		jobsOut := []task.Job{}
+		ctx.Printf("enter task \"%s\"\n", t.Name)
+		if t.Handler == nil {
+			ctx.Printf("  task handler is undefined - progress to next task\n")
+		} else {
+			jobsOut := []task.Job{}
 
-		for _, job := range jobsIn {
-			newJobs, err := t.Handler(ctx, job)
-			if err != nil {
-				return err
+			for _, job := range jobsIn {
+				newJobs, err := t.Handler(ctx, job)
+				if err != nil {
+					return err
+				}
+				jobsOut = append(jobsOut, newJobs...)
 			}
-			jobsOut = append(jobsOut, newJobs...)
-		}
 
-		jobsIn = jobsOut
+			jobsIn = jobsOut
+		}
+		ctx.Printf("leave task \"%s\"\n", t.Name)
 	}
 	return nil
 }
