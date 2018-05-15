@@ -1,6 +1,6 @@
 package task
 
-type ProcessingConf struct {
+type ProcessingConfig struct {
 	Type string //"sequential", "concurrent"
 	Sequential *SequentialProcessingConfig
 	Concurrent *ConcurrentProcessingConfig

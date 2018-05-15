@@ -25,7 +25,7 @@ type unmaterialized struct {
 	tasks task.TaskSequence
 }
 
-func (u unmaterialized) WithConfig(processingConf *task.ProcessingConf, appConf config.Config, allTasks task.TaskSequence) (*Pipeline, error) {
+func (u unmaterialized) WithConfig(processingConf *task.ProcessingConfig, appConf config.Config, allTasks task.TaskSequence) (*Pipeline, error) {
 	var materializer materializeFunc = nil
 	switch processingConf.Type {
 	case process_Sequential:
@@ -38,4 +38,4 @@ func (u unmaterialized) WithConfig(processingConf *task.ProcessingConf, appConf 
 	return materializer(u.tasks, processingConf, appConf, allTasks)
 }
 
-type materializeFunc func (tasks task.TaskSequence, processingConf *task.ProcessingConf, appConf config.Config, allTasks task.TaskSequence) (*Pipeline, error)
+type materializeFunc func (tasks task.TaskSequence, processingConf *task.ProcessingConfig, appConf config.Config, allTasks task.TaskSequence) (*Pipeline, error)

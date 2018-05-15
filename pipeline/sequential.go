@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func sequentialMaterializer(tasks task.TaskSequence, processingConf *task.ProcessingConf, appConf config.Config, allTasks task.TaskSequence) (*Pipeline, error) {
+func sequentialMaterializer(tasks task.TaskSequence, processingConf *task.ProcessingConfig, appConf config.Config, allTasks task.TaskSequence) (*Pipeline, error) {
 	logger.Infof("creating sequential processing pipeline (all tasks in row for each job - no concurrent task or job execution) from tasks: %s", tasks)
 
 	commands := make(chan Command)
@@ -24,7 +24,7 @@ func sequentialMaterializer(tasks task.TaskSequence, processingConf *task.Proces
 	return &Pipeline{ commands, events}, nil
 }
 
-func processingLoop(commands <-chan Command, events chan<- Event, tasks task.TaskSequence, ctx task.Context, processingConf *task.ProcessingConf) {
+func processingLoop(commands <-chan Command, events chan<- Event, tasks task.TaskSequence, ctx task.Context, processingConf *task.ProcessingConfig) {
 	stop := false
 	launchedAt := time.Now()
 
