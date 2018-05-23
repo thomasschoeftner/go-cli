@@ -5,7 +5,8 @@ import (
 	"go-cli/commons"
 )
 
-type Handler func(ctx Context, j Job) ([]Job, error)
+type Handler func(ctx Context) HandlerFunc
+type HandlerFunc func(j Job) ([]Job, error)
 
 type Context struct {
 	AllTasks TaskSequence

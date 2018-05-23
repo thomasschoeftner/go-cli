@@ -11,6 +11,8 @@ func Printf(format string, v ...interface{}) {
 	fmt.Printf(format, v...)
 }
 
+func DevNullPrintf(format string, v ...interface{}) {}
+
 
 type WriterFormatPrinter struct {
 	W io.Writer

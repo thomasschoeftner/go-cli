@@ -7,14 +7,16 @@ import (
 )
 
 
-func TasksOverviewHandler(ctx Context, job Job) ([]Job, error) {
+func TasksOverviewHandler(ctx Context) HandlerFunc {
 	ctx.Printf("%d tasks available:\n", len(ctx.AllTasks))
-	format := TaskSynopsisFormat(MaxTaskNameLength(ctx.AllTasks))
-	PrintTaskSynopsis(ctx.Printf, ctx.AllTasks, format, true)
-	return []Job{job}, nil
+	format := taskSynopsisFormat(maxTaskNameLength(ctx.AllTasks))
+	return func(job Job) ([]Job, error) {
+		printTaskSynopsis(ctx.Printf, ctx.AllTasks, format, true)
+		return []Job{job}, nil
+	}
 }
 
-func PrintTaskSynopsis(print commons.FormatPrinter, allTasks TaskSequence, format string, withDependencies bool) {
+func printTaskSynopsis(print commons.FormatPrinter, allTasks TaskSequence, format string, withDependencies bool) {
 	for _, t := range allTasks {
 		print(format, t.Name, t.Desc)
 		if withDependencies {
@@ -26,11 +28,11 @@ func PrintTaskSynopsis(print commons.FormatPrinter, allTasks TaskSequence, forma
 	}
 }
 
-func TaskSynopsisFormat(maxTaskNameLen int) string {
+func taskSynopsisFormat(maxTaskNameLen int) string {
 	return "  %-" + strconv.Itoa(maxTaskNameLen) + "s %s\n"
 }
 
-func MaxTaskNameLength(tasks TaskSequence) int {
+func maxTaskNameLength(tasks TaskSequence) int {
 	maxLength := 0
 	for _, t := range tasks {
 		l := len(t.Name)

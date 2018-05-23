@@ -5,14 +5,13 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"go-cli/task"
 )
 
 const (
 	UNDEFINED = "_UNDEFINED_"
 )
 
-func Setup(syntax *string, allTasks task.TaskSequence) {
+func Setup(syntax *string, extraLines ...string) {
 	writer := flag.CommandLine.Output()
 	wpf := commons.WriterFormatPrinter{writer}
 	printf := wpf.Printf
@@ -25,11 +24,10 @@ func Setup(syntax *string, allTasks task.TaskSequence) {
 
 		printf("\nFlags:\n")
 		flag.PrintDefaults()
+		printf("\n")
 
-		if allTasks != nil {
-			printf("\nTasks:\n")
-			format := task.TaskSynopsisFormat(task.MaxTaskNameLength(allTasks))
-			task.PrintTaskSynopsis(printf, allTasks, format, false)
+		for _, line := range extraLines {
+			printf("%s\n", line)
 		}
 	}
 
