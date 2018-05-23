@@ -10,36 +10,40 @@ import (
 
 type Config interface{}
 
+
+
 func FromFile(conf Config, configFile string, variables map[string]string) error {
-	// 1. unmarshall to map[string]... in order to access parameters for 2nd iteration
-	var genericMap map[string]interface{}
-	fromFile(&genericMap, configFile, variables)
-	recursiveVars := commons.Flatten(genericMap)
-
-	// 2. unmarshall to struct and replace parameters
-	return fromFile(conf, configFile, recursiveVars)
-}
-
-func fromFile(conf Config, configFile string, variables map[string]string) error {
 	raw, error := ioutil.ReadFile(configFile)
 	if error != nil {
 		return error
 	}
 	jsonString := string(raw[:])
 
+	return FromString(conf, jsonString, variables)
+}
+
+func FromString(conf Config, json string, variables map[string]string) error {
+	// 1. read to map[string]... in order to access parameters for 2nd iteration
+	var genericMap map[string]interface{}
+	fromString(&genericMap, json, variables)
+	recursiveVars := commons.Flatten(genericMap)
+
+	// 2. read again - replace parameters and store in struct
+	return fromString(conf, json, recursiveVars)
+}
+
+func fromString(conf Config, jsonStr string, variables map[string]string) error {
 	if variables != nil {
 		//replace variables in config
 		for k, v := range variables {
-			jsonString = replaceVariable(jsonString, k, v)
+			jsonStr = replaceVariable(jsonStr, k, v)
 		}
 	}
-
-	error = json.Unmarshal([]byte(jsonString), conf)
-	return error
+	return json.Unmarshal([]byte(jsonStr), conf)
 }
 
-func replaceVariable(configStr string, key string, val string) string {
+func replaceVariable(json string, key string, val string) string {
 	placeholder := fmt.Sprintf("${%s}", key)
-	n := strings.Count(configStr, placeholder)
-	return strings.Replace(configStr, placeholder, val, n)
+	n := strings.Count(json, placeholder)
+	return strings.Replace(json, placeholder, val, n)
 }
