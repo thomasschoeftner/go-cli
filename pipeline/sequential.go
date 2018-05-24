@@ -71,10 +71,11 @@ func process(job task.Job, tasks task.TaskSequence, ctx task.Context) error {
 		if t.Handler == nil {
 			ctx.Printf("  task handler is undefined - progress to next task\n")
 		} else {
+			handle := t.Handler(ctx)
 			jobsOut := []task.Job{}
 
 			for _, job := range jobsIn {
-				newJobs, err := t.Handler(ctx, job)
+				newJobs, err := handle(job)
 				if err != nil {
 					return err
 				}
