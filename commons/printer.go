@@ -3,6 +3,7 @@ package commons
 import (
 	"fmt"
 	"io"
+	"strings"
 )
 
 type FormatPrinter func(format string, v ...interface{})
@@ -11,8 +12,14 @@ func Printf(format string, v ...interface{}) {
 	fmt.Printf(format, v...)
 }
 
-func DevNullPrintf(format string, v ...interface{}) {}
+func DevNullPrintf(string, ...interface{}) {}
 
+func (printf FormatPrinter) WithIndent(indent int) FormatPrinter {
+	indentation := strings.Repeat(" ", indent)
+	return func(format string, v ...interface{}) {
+		printf(indentation + format, v...)
+	}
+}
 
 type WriterFormatPrinter struct {
 	W io.Writer

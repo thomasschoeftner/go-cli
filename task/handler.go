@@ -26,13 +26,7 @@ func (j Job) Copy() Job {
 }
 
 func (j Job) WithParam(key, val string) Job {
-	return j.WithParams(map[string]string {key : val})
-}
-
-func (j Job) WithParams(params map [string]string) Job {
 	newJob := j.Copy()
-	for k, v := range params {
-		newJob[k] = v
-	}
+	newJob[key] = val
 	return newJob
 }

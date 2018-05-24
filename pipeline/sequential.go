@@ -67,11 +67,14 @@ func process(job task.Job, tasks task.TaskSequence, ctx task.Context) error {
 	jobsIn := []task.Job{job}
 	println("tasks to be run:", tasks.String())
 	for _, t := range tasks {
-		ctx.Printf("enter task \"%s\"\n", t.Name)
+		ctx.Printf("enter task \"%s\"", t.Name)
 		if t.Handler == nil {
-			ctx.Printf("  task handler is undefined - progress to next task\n")
+			ctx.Printf(" (nothing to do) -> ")
 		} else {
-			handle := t.Handler(ctx)
+			ctx.Printf("\n")
+			indentedCtx := ctx
+			indentedCtx.Printf = ctx.Printf.WithIndent(2)
+			handle := t.Handler(indentedCtx)
 			jobsOut := []task.Job{}
 
 			for _, job := range jobsIn {
