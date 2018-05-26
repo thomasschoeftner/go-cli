@@ -17,7 +17,6 @@ type Context struct {
 
 type Job map[string]string
 
-
 func (j Job) Copy() Job {
 	newJob := Job {}
 	for k,v := range j {
