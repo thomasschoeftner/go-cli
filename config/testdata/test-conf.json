@@ -1,0 +1,10 @@
+{
+  "user" : "${user}",
+  "home" : "${home}",
+  "appName" : "${appname}",
+  "value" : "sepp hat gelbe eier",
+  "parameterized": "${subConf.parameter} ${value}",
+  "subConf" : {
+    "parameter" : "sub"
+  }
+}

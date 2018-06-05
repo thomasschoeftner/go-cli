@@ -6,16 +6,19 @@ import (
 	"encoding/json"
 	"fmt"
 	"go-cli/commons"
+	"os/user"
 )
 
 type Config interface{}
 
-
+var defaults = map[string](func() string) {
+	"user" : getUser,
+	"home" : getHome}
 
 func FromFile(conf Config, configFile string, variables map[string]string) error {
-	raw, error := ioutil.ReadFile(configFile)
-	if error != nil {
-		return error
+	raw, err := ioutil.ReadFile(configFile)
+	if err != nil {
+		return err
 	}
 	jsonString := string(raw[:])
 
@@ -23,27 +26,64 @@ func FromFile(conf Config, configFile string, variables map[string]string) error
 }
 
 func FromString(conf Config, json string, variables map[string]string) error {
-	// 1. read to map[string]... in order to access parameters for 2nd iteration
+	// 1. extend variables with default supported vars
+	if variables == nil {
+		variables = map[string]string {}
+	}
+	for k, f := range defaults {
+		variables[k] = f()
+	}
+
+	// 2. replace variables in raw json string
+	json = replaceVars(json, variables)
+
+	// 3. read to map[string]... in order to get embedded/recursive parameters for 2nd iteration
 	var genericMap map[string]interface{}
-	fromString(&genericMap, json, variables)
+	err := fromString(&genericMap, json)
+	if err != nil {
+		conf = nil
+		return err
+	}
 	recursiveVars := commons.Flatten(genericMap)
 
-	// 2. read again - replace parameters and store in struct
-	return fromString(conf, json, recursiveVars)
+	// 3. replace parameters with values from json string (recursive params)
+	json = replaceVars(json, recursiveVars)
+
+	// 4. read again to final structure
+	return fromString(conf, json)
 }
 
-func fromString(conf Config, jsonStr string, variables map[string]string) error {
-	if variables != nil {
-		//replace variables in config
-		for k, v := range variables {
-			jsonStr = replaceVariable(jsonStr, k, v)
-		}
-	}
+func fromString(conf Config, jsonStr string) error {
 	return json.Unmarshal([]byte(jsonStr), conf)
 }
 
-func replaceVariable(json string, key string, val string) string {
-	placeholder := fmt.Sprintf("${%s}", key)
-	n := strings.Count(json, placeholder)
-	return strings.Replace(json, placeholder, val, n)
+func replaceVars(jsonStr string, variables map[string]string) string {
+	if variables != nil {
+		//replace variables in config
+		for k, v := range variables {
+			placeholder := fmt.Sprintf("${%s}", k)
+			jsonStr = strings.Replace(jsonStr, placeholder, v, -1)
+		}
+	}
+	return jsonStr
+}
+
+func getUser() string {
+	u, err := user.Current()
+	if err != nil {
+		return "error"
+	}
+	return escape(u.Name)
+}
+
+func getHome() string {
+	u, err := user.Current()
+	if err != nil {
+		return "error"
+	}
+	return escape(u.HomeDir)
+}
+
+func escape(s string) string {
+	return strings.Replace(s, "\\", "\\\\", -1)
 }
