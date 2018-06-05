@@ -9,6 +9,7 @@ import (
 type TestConfig struct {
 	UserName string
 	HomeDir string
+	TempDir string
 	Value string
 	Parameterized string
 	SubConf SubConfig
@@ -22,6 +23,7 @@ var sampleConf string = `
 {
 	"userName" : "${user}",
 	"homeDir" : "${home}",
+	"tempDir" : "${temp}",
 	"value" : "sepp hat gelbe eier",
 	"parameterized": "${subConf.parameter} ${value}",
 	"subConf" : {
@@ -72,5 +74,8 @@ func TestVariableReplacement(t *testing.T) {
 	}
 	if len(conf.HomeDir) == 0 {
 		t.Error("expected home to be set, but was not")
+	}
+	if len(conf.TempDir) == 0 {
+		t.Error("expected temp to be set, but was not")
 	}
 }

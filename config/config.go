@@ -7,13 +7,15 @@ import (
 	"fmt"
 	"go-cli/commons"
 	"os/user"
+	"os"
 )
 
 type Config interface{}
 
 var defaults = map[string](func() string) {
 	"user" : getUser,
-	"home" : getHome}
+	"home" : getHome,
+    "temp" : getTemp}
 
 func FromFile(conf Config, configFile string, variables map[string]string) error {
 	raw, err := ioutil.ReadFile(configFile)
@@ -82,6 +84,11 @@ func getHome() string {
 		return "error"
 	}
 	return escape(u.HomeDir)
+}
+
+func getTemp() string {
+	tmp := os.TempDir()
+	return escape(tmp)
 }
 
 func escape(s string) string {
