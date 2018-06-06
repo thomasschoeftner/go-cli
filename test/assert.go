@@ -1,6 +1,8 @@
 package test
 
-import "testing"
+import (
+	"testing"
+)
 
 func CheckError(t *testing.T, e error) {
 	if e != nil {
@@ -8,11 +10,12 @@ func CheckError(t *testing.T, e error) {
 	}
 }
 
-func CheckErrors(t *testing.T, errs []error) {
-	if len(errs) > 0 {
-		t.Error("errors:")
-		for _, e := range errs {
-			t.Errorf("  %v\n", e)
+func ExpectError(t *testing.T, err error, desc string) {
+	if err == nil {
+		if len(desc) > 0 {
+			t.Errorf("expected error due to %s, but got none", desc)
+		} else {
+			t.Error("expected error, but got none")
 		}
 	}
 }
