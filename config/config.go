@@ -8,6 +8,7 @@ import (
 	"go-cli/commons"
 	"os/user"
 	"os"
+	"time"
 )
 
 type Config interface{}
@@ -15,6 +16,8 @@ type Config interface{}
 var defaults = map[string](func() string) {
 	"user" : getUser,
 	"home" : getHome,
+	"time" : getTime,
+	"date" : getDate,
     "temp" : getTemp}
 
 func FromFile(conf Config, configFile string, variables map[string]string) error {
@@ -93,4 +96,12 @@ func getTemp() string {
 
 func escape(s string) string {
 	return strings.Replace(s, "\\", "\\\\", -1)
+}
+
+func getTime() string {
+	return time.Now().Format("150405")
+}
+
+func getDate() string {
+	return time.Now().Format("2006-01-02")
 }
