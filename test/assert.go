@@ -25,13 +25,21 @@ type asserter struct {
 	t *testing.T
 }
 
-func AssertOn(t *testing.T) asserter {
-	return asserter{t}
+func AssertOn(t *testing.T) *asserter {
+	return &asserter{t}
 }
 
 func (a *asserter) NotError(e error) {
 	if e != nil {
 		a.t.Error(e)
+	}
+}
+
+func (a* asserter) ExpectError(msg string) func (error) {
+	return func(e error) {
+		if e == nil {
+			a.t.Error(msg)
+		}
 	}
 }
 
