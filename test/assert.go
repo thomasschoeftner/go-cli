@@ -7,6 +7,7 @@ import (
 func CheckError(t *testing.T, e error) {
 	if e != nil {
 		t.Error(e)
+		t.FailNow()
 	}
 }
 
@@ -14,8 +15,10 @@ func ExpectError(t *testing.T, err error, desc string) {
 	if err == nil {
 		if len(desc) > 0 {
 			t.Errorf("expected error due to %s, but got none", desc)
+			t.FailNow()
 		} else {
 			t.Error("expected error, but got none")
+			t.FailNow()
 		}
 	}
 }
@@ -32,6 +35,7 @@ func AssertOn(t *testing.T) *asserter {
 func (a *asserter) NotError(e error) {
 	if e != nil {
 		a.t.Error(e)
+		a.t.FailNow()
 	}
 }
 
@@ -39,6 +43,7 @@ func (a* asserter) ExpectError(msg string) func (error) {
 	return func(e error) {
 		if e == nil {
 			a.t.Error(msg)
+			a.t.FailNow()
 		}
 	}
 }
@@ -65,6 +70,7 @@ func (a *asserter) Is(expected bool, msg string) func(bool) {
 	return func(condition bool) {
 		if expected != condition {
 			a.t.Error(msg)
+			a.t.FailNow()
 		}
 	}
 }
@@ -92,5 +98,6 @@ func (a *asserter) FalseNotError(msg string) func(bool, error) {
 func (a *asserter) StringsEqual(expected, got string) {
 	if expected != got {
 		a.t.Errorf("string mismatch - expected %s, but got %s", expected, got)
+		a.t.FailNow()
 	}
 }
