@@ -91,6 +91,6 @@ func (a *asserter) FalseNotError(msg string) func(bool, error) {
 
 func (a *asserter) StringsEqual(expected, got string) {
 	if expected != got {
-		a.t.Error("string mismatch - expected %s, but got %s", expected, got)
+		a.t.Errorf("string mismatch - expected %s, but got %s", expected, got)
 	}
 }
