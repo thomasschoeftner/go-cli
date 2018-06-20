@@ -21,6 +21,15 @@ func (printf FormatPrinter) WithIndent(indent int) FormatPrinter {
 	}
 }
 
+func (printf FormatPrinter) Verbose(verbose bool) FormatPrinter {
+	return func(format string, v ...interface{}) {
+		if verbose {
+			printf(format, v...)
+		}
+	}
+}
+
+
 type WriterFormatPrinter struct {
 	W io.Writer
 }
