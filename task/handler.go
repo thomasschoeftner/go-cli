@@ -12,7 +12,7 @@ type Context struct {
 	AllTasks TaskSequence
 	Config   config.Config
 	Printf   commons.FormatPrinter
-	RunLazy     bool
+	RunLazy  bool
 }
 
 type Job map[string]string
