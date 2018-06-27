@@ -2,23 +2,21 @@ package test
 
 import (
 	"testing"
+	"errors"
 )
 
 func CheckError(t *testing.T, e error) {
 	if e != nil {
-		t.Error(e)
-		t.FailNow()
+		t.Fatal(e)
 	}
 }
 
 func ExpectError(t *testing.T, err error, desc string) {
 	if err == nil {
 		if len(desc) > 0 {
-			t.Errorf("expected error due to %s, but got none", desc)
-			t.FailNow()
+			t.Fatalf("expected error due to %s, but got none", desc)
 		} else {
-			t.Error("expected error, but got none")
-			t.FailNow()
+			t.Fatalf("expected error, but got none")
 		}
 	}
 }
@@ -32,26 +30,32 @@ func AssertOn(t *testing.T) *Assertion {
 	return &Assertion{t}
 }
 
+func (a *Assertion) FailWith(msg string) {
+	a.FailAfter(errors.New(msg))
+}
+
+func (a *Assertion) FailAfter(e error) {
+	a.T.Fatal(e)
+}
+
+
 func (a *Assertion) NotError(e error) {
 	if e != nil {
-		a.T.Error(e)
-		a.T.FailNow()
+		a.T.Fatal(e)
 	}
 }
 
 func (a *Assertion) ExpectError(msg string) func (error) {
 	return func(e error) {
 		if e == nil {
-			a.T.Error(msg)
-			a.T.FailNow()
+			a.T.Fatal(msg)
 		}
 	}
 }
 
 func (a *Assertion) StringNotError(s string, e error) string {
 	if e != nil {
-		a.T.Error(e)
-		a.T.FailNow()
+		a.T.Fatal(e)
 		return "_error_" //not relevant as FailNow will cut execution anyway
 	}
 	return s
@@ -59,8 +63,7 @@ func (a *Assertion) StringNotError(s string, e error) string {
 
 func (a *Assertion) BoolNotError(b bool, e error) bool {
 	if e != nil {
-		a.T.Error(e)
-		a.T.FailNow()
+		a.T.Fatal(e)
 		return false //not relevant as FailNow will cut execution anyway
 	}
 	return b
@@ -69,8 +72,7 @@ func (a *Assertion) BoolNotError(b bool, e error) bool {
 func (a *Assertion) Is(expected bool, msg string) func(bool) {
 	return func(condition bool) {
 		if expected != condition {
-			a.T.Error(msg)
-			a.T.FailNow()
+			a.T.Fatal(msg)
 		}
 	}
 }
@@ -97,7 +99,6 @@ func (a *Assertion) FalseNotError(msg string) func(bool, error) {
 
 func (a *Assertion) StringsEqual(expected, got string) {
 	if expected != got {
-		a.T.Errorf("string mismatch - expected %s, but got %s", expected, got)
-		a.T.FailNow()
+		a.T.Fatalf("string mismatch - expected %s, but got %s", expected, got)
 	}
 }
