@@ -102,3 +102,9 @@ func (a *Assertion) StringsEqual(expected, got string) {
 		a.T.Fatalf("string mismatch - expected %s, but got %s", expected, got)
 	}
 }
+
+func (a *Assertion) IntsEqual(expected, got int) {
+	if expected != got {
+		a.T.Fatalf("integer mismatch - expected %d, but got %d", expected, got)
+	}
+}
