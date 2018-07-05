@@ -108,15 +108,3 @@ func (a *Assertion) IntsEqual(expected, got int) {
 		a.T.Fatalf("integer mismatch - expected %d, but got %d", expected, got)
 	}
 }
-
-func (a *Assertion) NotNil(v interface{}) {
-	if v == nil {
-		a.T.Fatalf("expected non-nil value")
-	}
-}
-
-func (a *Assertion) Nil(v interface{}) {
-	if v != nil {
-		a.T.Fatalf("expected nil value")
-	}
-}
