@@ -38,9 +38,9 @@ func processingLoop(commands <-chan Command, events chan<- Event, tasks task.Tas
 			stop = true
 			events <- canceled(*command.remark)
 		case cmdProcess:
-			err := process(command.job, tasks, ctx)
+			job, err := process(command.job, tasks, ctx)
 			if err != nil {
-				events <- errorIn(command.job, err)
+				events <- errorIn(job, err)
 				if processingConf.Sequential.StopAtError {
 					stop = true
 				}
@@ -63,7 +63,7 @@ func processingLoop(commands <-chan Command, events chan<- Event, tasks task.Tas
 
 //process all tasks for specific job.
 //if a task creates multiple jobs as output, process these in bulk during each of the subsequent steps
-func process(job task.Job, tasks task.TaskSequence, ctx task.Context) error {
+func process(job task.Job, tasks task.TaskSequence, ctx task.Context) (task.Job, error) {
 	jobsIn := []task.Job{job}
 	println("tasks to be run:", tasks.String())
 	for _, t := range tasks {
@@ -80,7 +80,7 @@ func process(job task.Job, tasks task.TaskSequence, ctx task.Context) error {
 			for _, job := range jobsIn {
 				newJobs, err := handle(job)
 				if err != nil {
-					return err
+					return job, err
 				}
 				jobsOut = append(jobsOut, newJobs...)
 			}
@@ -89,5 +89,5 @@ func process(job task.Job, tasks task.TaskSequence, ctx task.Context) error {
 		}
 		ctx.Printf("leave task \"%s\"\n", t.Name)
 	}
-	return nil
+	return nil, nil
 }
