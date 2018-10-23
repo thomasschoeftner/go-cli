@@ -38,7 +38,6 @@ func (a *Assertion) FailAfter(e error) {
 	a.T.Fatal(e)
 }
 
-
 func (a *Assertion) NotError(e error) {
 	if e != nil {
 		a.T.Fatal(e)
