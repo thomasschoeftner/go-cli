@@ -7,11 +7,14 @@ import (
 	"context"
 	"time"
 	"go-cli/commons"
+	"io"
 )
 
 type commandWrapper struct{
 	timeout time.Duration
 	args []string
+	sensibleChars *string
+	quote *rune
 }
 
 func Command(executable string, timeout time.Duration) *commandWrapper {
@@ -26,6 +29,28 @@ func Command(executable string, timeout time.Duration) *commandWrapper {
 	return &commandWrapper {
 		timeout: timeout,
 		args: []string {strings.Trim(executable, " ")}}
+}
+
+func (cw *commandWrapper) WithQuotes(sensibleChars string, quote rune) *commandWrapper {
+	cw.sensibleChars = &sensibleChars
+	cw.quote = &quote
+	return cw
+}
+
+func (cw *commandWrapper) insertQuotes() []string {
+	if cw.sensibleChars == nil || cw.quote == nil {
+		return cw.args
+	}
+
+	q := *cw.quote
+	quoted := []string {}
+	for _, arg := range cw.args {
+		if strings.ContainsAny(arg, *cw.sensibleChars) {
+			arg = fmt.Sprintf("%c%s%c", q, arg, q)
+		}
+		quoted = append(quoted, arg)
+	}
+	return quoted
 }
 
 func (cw *commandWrapper) WithParam(key string, val string, separator string) *commandWrapper {
@@ -51,18 +76,21 @@ func (cw *commandWrapper) WithArgument(arg string) *commandWrapper {
 }
 
 func (cw *commandWrapper) String() string {
-	return strings.Join(cw.args, " ")
+	return strings.Join(cw.insertQuotes(), " ")
 }
 
-func (cw *commandWrapper) ExecuteAsync() (*exec.Cmd, context.CancelFunc, error) {
+func (cw *commandWrapper) ExecuteAsync(stdOut io.Writer, errOut io.Writer) (*exec.Cmd, context.CancelFunc, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), cw.timeout)
-	cmd :=  exec.CommandContext(ctx, cw.args[0], cw.args[1:]...)
+	args := cw.insertQuotes()
+	cmd :=  exec.CommandContext(ctx, args[0], args[1:]...)
+	cmd.Stdout = stdOut
+	cmd.Stderr = errOut
 	err := cmd.Start()
 	return cmd, cancel, err
 }
 
-func (cw *commandWrapper) ExecuteSync() error {
-	cmd, _, err := cw.ExecuteAsync()
+func (cw *commandWrapper) ExecuteSync(stdOut io.Writer, errOut io.Writer) error {
+	cmd, _, err := cw.ExecuteAsync(stdOut, errOut)
 	if err != nil {
 		return err
 	}
