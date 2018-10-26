@@ -9,10 +9,11 @@ type Handler func(ctx Context) HandlerFunc
 type HandlerFunc func(j Job) ([]Job, error)
 
 type Context struct {
-	AllTasks TaskSequence
-	Config   config.Config
-	Printf   commons.FormatPrinter
-	RunLazy  bool
+	AllTasks  TaskSequence
+	Config    config.Config
+	Printf    commons.FormatPrinter
+	RunLazy   bool
+	OutputDir string
 }
 
 type Job map[string]string

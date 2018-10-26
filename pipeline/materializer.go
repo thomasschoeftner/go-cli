@@ -25,7 +25,7 @@ type unmaterialized struct {
 	tasks task.TaskSequence
 }
 
-func (u unmaterialized) WithConfig(processingConf *task.ProcessingConfig, appConf config.Config, allTasks task.TaskSequence, lazy bool) (*Pipeline, error) {
+func (u unmaterialized) WithConfig(processingConf *task.ProcessingConfig, appConf config.Config, allTasks task.TaskSequence, lazy bool, outputDir string) (*Pipeline, error) {
 	var materializer materializeFunc = nil
 	switch processingConf.Type {
 	case process_Sequential:
@@ -35,7 +35,7 @@ func (u unmaterialized) WithConfig(processingConf *task.ProcessingConfig, appCon
 	default:
 		return nil, errors.New(fmt.Sprintf("Invalid processing type - materializer for \"%s\" is unknown", processingConf.Type))
 	}
-	return materializer(u.tasks, processingConf, appConf, allTasks, lazy)
+	return materializer(u.tasks, processingConf, appConf, allTasks, lazy, outputDir)
 }
 
-type materializeFunc func (tasks task.TaskSequence, processingConf *task.ProcessingConfig, appConf config.Config, allTasks task.TaskSequence, lazy bool) (*Pipeline, error)
+type materializeFunc func (tasks task.TaskSequence, processingConf *task.ProcessingConfig, appConf config.Config, allTasks task.TaskSequence, lazy bool, outputDir string) (*Pipeline, error)

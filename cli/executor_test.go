@@ -95,16 +95,16 @@ func TestRunCommandSync(t *testing.T) {
 	t.Run("successfully run command", func(t* testing.T) {
 		cmd := Command("dir", timeout).WithArgument(".")
 		println(">>>", cmd.String())
-		test.AssertOn(t).NotError(cmd.ExecuteSync())
+		test.AssertOn(t).NotError(cmd.ExecuteSync(nil, nil))
 	})
 
 	t.Run("timeout before command completes", func(t* testing.T) {
 		cmd := Command("sleep", timeout).WithArgument("5")
-		test.AssertOn(t).ExpectError("expect error on command timeout")(cmd.ExecuteSync())
+		test.AssertOn(t).ExpectError("expect error on command timeout")(cmd.ExecuteSync(nil, nil))
 	})
 
 	t.Run("run non-existing command", func(t* testing.T) {
 		cmd := Command("myfantasyexecutable", timeout)
-		test.AssertOn(t).ExpectError("expect error on running missing executable")(cmd.ExecuteSync())
+		test.AssertOn(t).ExpectError("expect error on running missing executable")(cmd.ExecuteSync(nil, nil))
 	})
 }
