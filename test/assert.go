@@ -3,7 +3,10 @@ package test
 import (
 	"testing"
 	"errors"
+	"fmt"
 )
+
+const irrelevantErrorReturnAfterFatalExit = "_error_"  //not relevant as FailNow will cut execution anyway
 
 func CheckError(t *testing.T, e error) {
 	if e != nil {
@@ -33,6 +36,9 @@ func AssertOn(t *testing.T) *Assertion {
 func (a *Assertion) FailWith(msg string) {
 	a.FailAfter(errors.New(msg))
 }
+func (a *Assertion) FailWithf(format string, v ...interface{}) {
+	a.FailWith(fmt.Sprintf(format, v...))
+}
 
 func (a *Assertion) FailAfter(e error) {
 	a.T.Fatal(e)
@@ -51,11 +57,23 @@ func (a *Assertion) ExpectError(msg string) func (error) {
 		}
 	}
 }
+func (a *Assertion) ExpectErrorf(format string, v ...interface{}) func (error) {
+	return a.ExpectError(fmt.Sprintf(format, v...))
+}
+
+
+func (a *Assertion) AnythingNotError(any interface{}, e error) interface{} {
+	if e != nil {
+		a.T.Fatal(e)
+		return irrelevantErrorReturnAfterFatalExit //not relevant as FailNow will cut execution anyway
+	}
+	return any
+}
 
 func (a *Assertion) StringNotError(s string, e error) string {
 	if e != nil {
 		a.T.Fatal(e)
-		return "_error_" //not relevant as FailNow will cut execution anyway
+		return irrelevantErrorReturnAfterFatalExit //not relevant as FailNow will cut execution anyway
 	}
 	return s
 }
@@ -79,21 +97,35 @@ func (a *Assertion) Is(expected bool, msg string) func(bool) {
 func (a *Assertion) True(msg string) func(bool) {
 	return a.Is(true, msg)
 }
+func (a *Assertion) Truef(format string, v ...interface{}) func(bool) {
+	return a.True(fmt.Sprintf(format, v...))
+}
 
 func (a *Assertion) False(msg string) func(bool) {
 	return a.Is(false, msg)
 }
+func (a *Assertion) Falsef(format string, v ...interface{}) func(bool) {
+	return a.False(fmt.Sprintf(format, v...))
+}
+
+
 
 func (a *Assertion) TrueNotError(msg string) func(bool, error) {
 	return func(b bool, e error) {
 		a.True(msg)(a.BoolNotError(b, e))
 	}
 }
+func (a *Assertion) TrueNotErrorf(format string, v ...interface{}) func(bool, error) {
+	return a.TrueNotError(fmt.Sprintf(format, v...))
+}
 
 func (a *Assertion) FalseNotError(msg string) func(bool, error) {
 	return func(b bool, e error) {
 		a.False(msg)(a.BoolNotError(b, e))
 	}
+}
+func (a *Assertion) FalseNotErrorf(format string, v ...interface{}) func(bool, error) {
+	return a.FalseNotError(fmt.Sprintf(format, v...))
 }
 
 func (a *Assertion) StringsEqual(expected, got string) {
