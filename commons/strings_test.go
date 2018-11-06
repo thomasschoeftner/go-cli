@@ -24,18 +24,18 @@ func TestIsEmptyOrSpaces(t *testing.T) {
 	assert.False("mixed character and spaces were detected as empty-or-spaces")(IsStringEmptyWithSpaces(" ? = "))
 }
 
-func TestReplaceSpecialCharsWith(t *testing.T) {
+func TestRemoveSpecialChars(t *testing.T) {
 	t.Run("should leave string if nothing to replace", func(t *testing.T) {
 		in := "frankIsWeird"
-		out := ReplaceSpecialCharsWith(in, '_')
+		out := RemoveSpecialChars(in, "")
 		test.AssertOn(t).StringsEqual(in, out)
 	})
 
 	t.Run("should replace spaces and other non-letter and non-digit characters", func(t *testing.T) {
 		assert := test.AssertOn(t)
-		in :=       "frank33 is weirdly 33 years old!?"
-		expected := "frank33_is_weirdly_33_years_old__"
-		out := ReplaceSpecialCharsWith(in, '_')
+		in :=       "frank#33 is weirdly 33 years old!?"
+		expected := "frank33 is weirdly 33 years old"
+		out := RemoveSpecialChars(in, " ")
 		assert.Truef("expected \"%s\" after character replacement, but got \"%s\"", expected, out )(expected == out)
 	})
 }

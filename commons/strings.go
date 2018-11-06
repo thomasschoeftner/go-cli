@@ -15,19 +15,16 @@ func IsStringEmptyWithSpaces(s string) bool {
 	return 0 == len(strings.Trim(s, " "))
 }
 
-
-func ReplaceSpecialCharsWith(in string, replacement rune) string {
-	return 	strings.Map(func(in rune) rune {
-		if  (in >= 'a' && in <= 'z') ||
-			(in >= 'A' && in <= 'Z') ||
-			(in >= '0' && in <= '9') {
-			return in
+func RemoveSpecialChars(in string, exceptions string) string {
+	return 	strings.Map(func(r rune) rune {
+		if  (r >= 'a' && r <= 'z') ||
+			(r >= 'A' && r <= 'Z') ||
+			(r >= '0' && r <= '9') ||
+			strings.ContainsRune(exceptions, r) {
+			return r
 		} else {
-			return replacement
+			return -1
 		}
 	}, in)
 }
 
-func RemoveSpecialChars(in string) string {
-	return strings.Replace(ReplaceSpecialCharsWith(in, '#'), "#", "", -1)
-}
