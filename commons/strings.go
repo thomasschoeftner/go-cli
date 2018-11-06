@@ -27,3 +27,7 @@ func ReplaceSpecialCharsWith(in string, replacement rune) string {
 		}
 	}, in)
 }
+
+func RemoveSpecialChars(in string) string {
+	return strings.Replace(ReplaceSpecialCharsWith(in, '#'), "#", "", -1)
+}
