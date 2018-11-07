@@ -134,6 +134,19 @@ func (a *Assertion) StringsEqual(expected, got string) {
 	}
 }
 
+func (a *Assertion) StringSlicesEqual(expected, got []string) {
+	err := fmt.Errorf("string slice mismatch - expected %v, but got %v", expected, got)
+	if len(expected) != len(got)  {
+		a.T.Fatal(err)
+	}
+	for i, v := range expected {
+		if v != got[i]  {
+			a.T.Fatal(err)
+		}
+	}
+
+}
+
 func (a *Assertion) IntsEqual(expected, got int) {
 	if expected != got {
 		a.T.Fatalf("integer mismatch - expected %d, but got %d", expected, got)
