@@ -15,7 +15,7 @@ func IsStringEmptyWithSpaces(s string) bool {
 	return 0 == len(strings.Trim(s, " "))
 }
 
-func RemoveSpecialChars(in string, exceptions string) string {
+func RemoveNonDigitsAndNonLetters(in string, exceptions string) string {
 	return 	strings.Map(func(r rune) rune {
 		if  (r >= 'a' && r <= 'z') ||
 			(r >= 'A' && r <= 'Z') ||
@@ -28,3 +28,12 @@ func RemoveSpecialChars(in string, exceptions string) string {
 	}, in)
 }
 
+func RemoveCharacters(in string, toRemove string) string {
+	return strings.Map(func(r rune) rune {
+		if strings.ContainsRune(toRemove, r) {
+			return -1
+		} else {
+			return r
+		}
+	}, in)
+}

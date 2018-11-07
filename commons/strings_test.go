@@ -24,10 +24,10 @@ func TestIsEmptyOrSpaces(t *testing.T) {
 	assert.False("mixed character and spaces were detected as empty-or-spaces")(IsStringEmptyWithSpaces(" ? = "))
 }
 
-func TestRemoveSpecialChars(t *testing.T) {
+func TestRemoveNonDigitsAndNonLetters(t *testing.T) {
 	t.Run("should leave string if nothing to replace", func(t *testing.T) {
 		in := "frankIsWeird"
-		out := RemoveSpecialChars(in, "")
+		out := RemoveNonDigitsAndNonLetters(in, "")
 		test.AssertOn(t).StringsEqual(in, out)
 	})
 
@@ -35,7 +35,22 @@ func TestRemoveSpecialChars(t *testing.T) {
 		assert := test.AssertOn(t)
 		in :=       "frank#33 is weirdly 33 years old!?"
 		expected := "frank33 is weirdly 33 years old"
-		out := RemoveSpecialChars(in, " ")
+		out := RemoveNonDigitsAndNonLetters(in, " ")
 		assert.Truef("expected \"%s\" after character replacement, but got \"%s\"", expected, out )(expected == out)
+	})
+}
+
+func TestRemoveCharacters(t *testing.T) {
+	t.Run("should return same string if no runes-to-remove found", func(t *testing.T) {
+		in := "frank#33 is still weird!"
+		out := RemoveCharacters(in, "?{}%$")
+		test.AssertOn(t).StringsEqual(in, out)
+	})
+
+	t.Run("should return cut string if runes-to-remove found", func(t *testing.T) {
+		in := "frank#33 is still weird!"
+		expected := "frankisstillweird"
+		out := RemoveCharacters(in, "?{}%$ #!3")
+		test.AssertOn(t).StringsEqual(expected, out)
 	})
 }
