@@ -1,6 +1,9 @@
 package commons
 
-import "strings"
+import (
+	"strings"
+	"hash/fnv"
+)
 
 func IsStringAmong(searched string, strings []string) bool {
 	for _, s := range strings {
@@ -36,4 +39,10 @@ func RemoveCharacters(in string, toRemove string) string {
 			return r
 		}
 	}, in)
+}
+
+func Hash32(s string) uint32 {
+	h := fnv.New32a()
+	h.Write([]byte(s))
+	return h.Sum32()
 }
