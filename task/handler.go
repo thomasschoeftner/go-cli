@@ -13,7 +13,6 @@ type Context struct {
 	Config    config.Config
 	Printf    commons.FormatPrinter
 	RunLazy   bool
-	OutputDir string
 }
 
 type Job map[string]string

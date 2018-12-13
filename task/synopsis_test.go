@@ -35,7 +35,7 @@ func TestGetTaskNameLength(t *testing.T) {
 func TestTaskOverviewHandler(t *testing.T) {
 	allTasks := TaskSequence{NewTask("a", "desc", nil), NewTask("bbb", "desc", nil), NewTask("cc", "desc", nil)}
 	t.Run("return identical Job as received", func(t *testing.T) {
-		ctx := Context{allTasks, nil, commons.DevNullPrintf, false, ""}
+		ctx := Context{allTasks, nil, commons.DevNullPrintf, false}
 		handler := TasksOverviewHandler(ctx)
 		job := Job{}
 		jobs, err := handler(job)

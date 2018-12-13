@@ -11,13 +11,13 @@ import (
 	"time"
 )
 
-func sequentialMaterializer(tasks task.TaskSequence, processingConf *task.ProcessingConfig, appConf config.Config, allTasks task.TaskSequence, lazy bool, outputDir string) (*Pipeline, error) {
+func sequentialMaterializer(tasks task.TaskSequence, processingConf *task.ProcessingConfig, appConf config.Config, allTasks task.TaskSequence, lazy bool) (*Pipeline, error) {
 	logger.Infof("creating sequential processing pipeline (all tasks in row for each job - no concurrent task or job execution) from tasks: %s", tasks)
 
 	commands := make(chan Command)
 	events := make(chan Event)
 	printer := commons.WriterFormatPrinter{ os.Stdout}
-	ctx := task.Context{allTasks, appConf, printer.Printf, lazy, outputDir}
+	ctx := task.Context{allTasks, appConf, printer.Printf, lazy}
 
 	// run processing loop
 	go processingLoop(commands, events, tasks, ctx, processingConf)
