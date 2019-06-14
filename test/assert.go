@@ -24,9 +24,15 @@ func ExpectError(t *testing.T, err error, desc string) {
 	}
 }
 
-
 type Assertion struct {
 	T *testing.T
+}
+
+func Run(t *testing.T, name string, f func(assert *Assertion)) {
+	t.Run(name, func(t *testing.T) {
+		a := AssertOn(t)
+		f(a)
+	})
 }
 
 func AssertOn(t *testing.T) *Assertion {
