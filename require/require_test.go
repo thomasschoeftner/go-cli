@@ -6,15 +6,13 @@ import (
 	"errors"
 )
 
-func getFatal() ( *bool, *string, *int, func(depth int, v ...interface{})) {
+func getFatal() (*bool, *string, *int, func(depth int, v ...interface{})) {
 	called := false	
-	var values []interface{}
 	file := ""
 	line := -1
 
 	log := func(depth int, v ...interface{}) {
 		called = true
-		values = v
 		_, file, line, _ = runtime.Caller(depth + 1)
 	}
 	return &called, &file, &line, log
@@ -158,7 +156,7 @@ func TestTrueOrDie(t *testing.T) {
 
 		validateErrors(t, *called, *file, expectedFile, *line, expectedLine)
 		if len(counter) != 3 {
-			t.Errorf("expected %d callbacks to be invoked, but only %d were called", 3, counter)
+			t.Errorf("expected %d callbacks to be invoked, but only %d were called", 3, len(counter))
 		}
 	})
 
