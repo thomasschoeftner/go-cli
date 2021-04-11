@@ -3,8 +3,8 @@ package pipeline
 import (
 	"errors"
 	"fmt"
-	"go-cli/config"
-	"go-cli/task"
+	"github.com/thomasschoeftner/go-cli/config"
+	"github.com/thomasschoeftner/go-cli/task"
 )
 
 const (

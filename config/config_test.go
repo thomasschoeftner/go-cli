@@ -2,7 +2,7 @@ package config
 
 import (
 	"testing"
-	"go-cli/test"
+	"github.com/thomasschoeftner/go-cli/test"
 	"fmt"
 )
 

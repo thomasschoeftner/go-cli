@@ -7,7 +7,7 @@ import (
 )
 
 func getFatal() ( *bool, *string, *int, func(depth int, v ...interface{})) {
-	called := false
+	called := false	
 	var values []interface{}
 	file := ""
 	line := -1

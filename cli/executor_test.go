@@ -3,7 +3,7 @@ package cli
 import (
 	"testing"
 	"time"
-	"go-cli/test"
+	"github.com/thomasschoeftner/go-cli/test"
 )
 
 func TestCreateCommand(t *testing.T) {
@@ -93,7 +93,7 @@ func TestRunCommandSync(t *testing.T) {
 	var timeout, _ = time.ParseDuration("2s")
 
 	t.Run("successfully run command", func(t* testing.T) {
-		cmd := Command("dir", timeout).WithArgument(".")
+		cmd := Command("ls", timeout).WithArgument(".")
 		println(">>>", cmd.String())
 		test.AssertOn(t).NotError(cmd.ExecuteSync(nil, nil))
 	})

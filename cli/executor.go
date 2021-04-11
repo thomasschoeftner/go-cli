@@ -6,7 +6,7 @@ import (
 	"strings"
 	"context"
 	"time"
-	"go-cli/commons"
+	"github.com/thomasschoeftner/go-cli/commons"
 	"io"
 )
 

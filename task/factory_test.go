@@ -2,7 +2,7 @@ package task
 
 import (
 	"testing"
-	"go-cli/test"
+	"github.com/thomasschoeftner/go-cli/test"
 )
 
 func testHandler(ctx Context) HandlerFunc {

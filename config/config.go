@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"encoding/json"
 	"fmt"
-	"go-cli/commons"
+	"github.com/thomasschoeftner/go-cli/commons"
 	"os/user"
 	"os"
 	"time"

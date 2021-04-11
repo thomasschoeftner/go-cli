@@ -3,7 +3,7 @@ package cli
 import (
 	"os"
 	"flag"
-	"go-cli/commons"
+	"github.com/thomasschoeftner/go-cli/commons"
 	"strconv"
 	"strings"
 )

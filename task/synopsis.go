@@ -2,7 +2,7 @@ package task
 
 import (
 	"strconv"
-	"go-cli/commons"
+	"github.com/thomasschoeftner/go-cli/commons"
 	"fmt"
 )
 

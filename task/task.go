@@ -1,7 +1,7 @@
 package task
 
 import (
-	"go-cli/tree"
+	"github.com/thomasschoeftner/go-cli/tree"
 	"strings"
 )
 

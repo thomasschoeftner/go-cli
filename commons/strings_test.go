@@ -2,7 +2,7 @@ package commons
 
 import (
 	"testing"
-	"go-cli/test"
+	"github.com/thomasschoeftner/go-cli/test"
 )
 
 func TestIsStringAmong(t *testing.T) {

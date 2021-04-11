@@ -1,8 +1,8 @@
 package task
 
 import (
-	"go-cli/config"
-	"go-cli/commons"
+	"github.com/thomasschoeftner/go-cli/config"
+	"github.com/thomasschoeftner/go-cli/commons"
 )
 
 type Handler func(ctx Context) HandlerFunc

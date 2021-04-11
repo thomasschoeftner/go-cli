@@ -3,7 +3,7 @@ package pipeline
 import (
 	"time"
 	"sync"
-	"go-cli/task"
+	"github.com/thomasschoeftner/go-cli/task"
 	"fmt"
 )
 

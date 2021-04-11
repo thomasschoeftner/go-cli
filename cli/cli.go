@@ -1,7 +1,8 @@
 package cli
+
 import (
 	"flag"
-	"go-cli/commons"
+	"github.com/thomasschoeftner/go-cli/commons"
 	"errors"
 	"fmt"
 	"os"

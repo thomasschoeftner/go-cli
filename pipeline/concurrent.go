@@ -1,8 +1,8 @@
 package pipeline
 
 import (
-	"go-cli/task"
-	"go-cli/config"
+	"github.com/thomasschoeftner/go-cli/task"
+	"github.com/thomasschoeftner/go-cli/config"
 	"github.com/google/logger"
 	"errors"
 )

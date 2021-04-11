@@ -1,11 +1,11 @@
 package pipeline
 
 import (
-	"go-cli/task"
-	"go-cli/config"
+	"github.com/thomasschoeftner/go-cli/task"
+	"github.com/thomasschoeftner/go-cli/config"
 	"github.com/google/logger"
 	"fmt"
-	"go-cli/commons"
+	"github.com/thomasschoeftner/go-cli/commons"
 	"os"
 	"errors"
 	"time"

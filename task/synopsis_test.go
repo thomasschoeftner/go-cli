@@ -2,7 +2,7 @@ package task
 
 import (
 	"testing"
-	"go-cli/commons"
+	"github.com/thomasschoeftner/go-cli/commons"
 )
 
 func TestGetTaskNameLength(t *testing.T) {
